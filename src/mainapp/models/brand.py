@@ -8,13 +8,11 @@ class Brand(TimestampMixin):
         blank=True,
         null=True,
         unique=True,
-        error_messages={
-            'unique': 'Такой бренд уже существует.'
-        }
+        error_messages={"unique": "Такой бренд уже существует."},
     )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        db_table = 'brands'
+        db_table = "brands"

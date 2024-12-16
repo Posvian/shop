@@ -3,34 +3,25 @@ from base.models import TimestampMixin
 
 
 class Product(TimestampMixin):
-    name = models.CharField(max_length=30, verbose_name='Name')
+    name = models.CharField(max_length=30, verbose_name="Name")
     description = models.TextField(
-        verbose_name='Description',
-        blank=True,
-        null=True
+        verbose_name="Description", blank=True, null=True
     )
     stock_balance = models.PositiveIntegerField(default=0)
     price = models.DecimalField(
-        default=0,
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Price'
+        default=0, max_digits=10, decimal_places=2, verbose_name="Price"
     )
     category = models.ForeignKey(
-        to='Category',
-        verbose_name='category',
+        to="Category",
+        verbose_name="category",
         on_delete=models.CASCADE,
-        null=True
+        null=True,
     )
     brand = models.ForeignKey(
-        to='Brand',
-        verbose_name='brand',
-        on_delete=models.CASCADE)
+        to="Brand", verbose_name="brand", on_delete=models.CASCADE
+    )
     rating = models.DecimalField(
-        default=0,
-        max_digits=3,
-        decimal_places=2,
-        verbose_name='Rating'
+        default=0, max_digits=3, decimal_places=2, verbose_name="Rating"
     )
     is_hidden = models.BooleanField(default=False)
 
@@ -42,4 +33,4 @@ class Product(TimestampMixin):
         self.save()
 
     class Meta:
-        db_table = 'product'
+        db_table = "product"
