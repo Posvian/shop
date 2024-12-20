@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for product in products %}
+        <ul>
+            <li>{{ product.name }}</li>
+            <li>{{ product.description }}</li>
+            <li>{{ product.brand }}</li>
+            {% for i in feedback %}
+                
+            {% endfor %}
+
+        </ul>
+
+    {% endfor %}
+
+
+{% endblock content %}

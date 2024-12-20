@@ -1,13 +1,20 @@
 from django.shortcuts import render
-from .models import Product
+from .models import Product, Feedback
 
 
-# def product_list(request):
-#     products = (
-#         Product.objects.select_related("brand")
-#         .select_related("category")
-#         .all()
-#     )
 #
-#     context = {"products": products}
-#     return render(request=request, template_name="mainapp_template/base.html", context=context)
+def task_1(request):
+
+    products = Product.objects.select_related(
+        "category", "brand", "seller"
+    ).all()
+    feedback = Feedback.objects.select_related("user", "product").all()
+    context = {
+        "products": products,
+        "feedback": feedback,
+    }
+    return render(
+        request=request,
+        template_name="mainapp_template/task_1.html",
+        context=context,
+    )

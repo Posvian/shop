@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    {% block title %}
+        <title>Title</title>
+    {% endblock %}
+</head>
+<body>
+{% include "includes/menu.html" %}
+<div>
+    {% block content %}
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab amet at
+        consectetur delectus, distinctio eaque error esse eveniet, explicabo
+        hic labore laborum molestias, officia pariatur placeat quam repellendus
+        reprehenderit voluptatibus.
+    {% endblock content %}
+</div>
+{% include "includes/footer.html" %}
+</body>
+</html>

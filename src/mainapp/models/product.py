@@ -20,6 +20,9 @@ class Product(TimestampMixin):
     brand = models.ForeignKey(
         to="Brand", verbose_name="brand", on_delete=models.CASCADE
     )
+    seller = models.ForeignKey(
+        to="Seller", on_delete=models.CASCADE, verbose_name="seller", default=1
+    )
     rating = models.DecimalField(
         default=0, max_digits=3, decimal_places=2, verbose_name="Rating"
     )
