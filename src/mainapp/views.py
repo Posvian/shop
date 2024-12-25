@@ -5,7 +5,7 @@ from .models import Product, Feedback
 #
 def task_1(request):
 
-    products = Product.objects.select_related(
+    products: Product = Product.objects.select_related(
         "category", "brand", "seller"
     ).all()
     feedback = Feedback.objects.select_related("user", "product").all()

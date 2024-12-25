@@ -7,8 +7,9 @@
             <li>{{ product.name }}</li>
             <li>{{ product.description }}</li>
             <li>{{ product.brand }}</li>
-            {% for i in feedback %}
-                
+            {% for feedback in product.feedback.all %}
+                <li>{{ feedback.feedback }}</li>
+                <li>{{ feedback.user.first_name }}</li>
             {% endfor %}
 
         </ul>

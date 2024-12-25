@@ -18,7 +18,7 @@ class Feedback(TimestampMixin):
         to=CustomUser, on_delete=models.CASCADE, related_name="feedback"
     )
     product = models.ForeignKey(
-        to=Product, on_delete=models.CASCADE, related_name="product"
+        to=Product, on_delete=models.CASCADE, related_name="feedback"
     )
     feedback = models.TextField(default="No feedback", verbose_name="feedback")
     rating = models.SmallIntegerField(

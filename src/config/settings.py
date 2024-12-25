@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_extensions",
     "authapp",
-    "mainapp",
+    "mainapp.apps.MainappConfig",
     "base",
 ]
 
