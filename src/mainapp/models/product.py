@@ -1,4 +1,6 @@
+from django.dispatch import receiver
 from django.db import models
+from django.db.models.signals import post_delete
 from base.models import TimestampMixin
 
 
@@ -26,6 +28,7 @@ class Product(TimestampMixin):
     rating = models.DecimalField(
         default=0, max_digits=3, decimal_places=2, verbose_name="Rating"
     )
+    sales_count = models.PositiveIntegerField(default=0)
     is_hidden = models.BooleanField(default=False)
 
     def __str__(self):
@@ -37,3 +40,8 @@ class Product(TimestampMixin):
 
     class Meta:
         db_table = "product"
+
+
+# @receiver(post_delete, sender=Product)
+# def feedback_auto_delete(sender, instance, *args, **kwargs):
+#     Feedback.objects.filter(product_id=instance.id).delete()

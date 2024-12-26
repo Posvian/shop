@@ -1,4 +1,6 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from base.models import TimestampMixin
 from authapp.models import CustomUser
 from .product import Product
@@ -27,3 +29,16 @@ class Feedback(TimestampMixin):
 
     def __str__(self):
         return f"{self.product} {self.user}"
+
+
+# @receiver(post_save, sender=Feedback)
+# def auto_update_product_rating(sender, instance, created, *args, **kwargs):
+#     ratings = Feedback.objects.filter(product=instance.product.id)
+#     ratings_sum = 0
+#     for rating in ratings:
+#         ratings_sum += rating.rating
+#     new_product_rating = ratings_sum / len(ratings)
+#     print(len(ratings))
+#     product = Product.objects.get(id=instance.product.id)
+#     product.rating = new_product_rating
+#     product.save()
