@@ -7,6 +7,4 @@ class MainappConfig(AppConfig):
     name = "mainapp"
 
     def ready(self):
-        from . import signals
-
-        request_finished.connect(signals.my_callback)
+        import mainapp.signals
