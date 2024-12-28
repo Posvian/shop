@@ -2,7 +2,7 @@ from django.core.signals import request_finished
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save, post_delete
 from authapp.models import CustomUser
-from .models import Product, Feedback, Order, DeliveryMethod
+from .models import Product, Feedback, Order, DeliveryMethod, Tags
 from django.core.validators import ValidationError
 
 
@@ -51,3 +51,9 @@ def inform_order_user(sender, instance, created, *args, **kwargs):
         print(
             f"{CustomUser.objects.get(id=instance.user_id)}, Ваш заказ оплачен"
         )
+
+
+@receiver(post_save, sender=Product)
+def new_product_auto_tag(sender, instance, *args, **kwargs):
+    tag = Tags.objects.get(name="Новинки")
+    tag.product.add(instance)

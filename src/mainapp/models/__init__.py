@@ -7,3 +7,4 @@ from .delivery_information import DeliveryInformation
 from .feedback import Feedback
 from .seller import Seller
 from .delivery_method import DeliveryMethod
+from .tag import Tags
