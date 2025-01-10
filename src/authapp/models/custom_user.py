@@ -39,6 +39,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text="Пользователь с таким статусом может войти в раздел admin",
     )
+    country = models.CharField(max_length=40, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
@@ -51,6 +52,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         db_table = "users"
         verbose_name = "user"
         verbose_name_plural = "users"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"

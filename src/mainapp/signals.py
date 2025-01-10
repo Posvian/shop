@@ -1,9 +1,10 @@
 from django.core.signals import request_finished
+from django.core.validators import ValidationError
+from django.core.mail import send_mail
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save, post_delete
 from authapp.models import CustomUser
 from .models import Product, Feedback, Order, DeliveryMethod, Tags
-from django.core.validators import ValidationError
 
 
 @receiver(request_finished)
@@ -18,7 +19,6 @@ def product_auto_update_rating(sender, instance, created, *args, **kwargs):
     for rating in ratings:
         ratings_sum += rating.rating
     new_product_rating = ratings_sum / len(ratings)
-    print(len(ratings))
     product = Product.objects.get(id=instance.product.id)
     product.rating = new_product_rating
     product.save()
@@ -48,12 +48,20 @@ def delivery_method_price_validator(sender, instance, *args, **kwargs):
 @receiver(post_save, sender=Order)
 def inform_order_user(sender, instance, created, *args, **kwargs):
     if instance.is_paid:
-        print(
-            f"{CustomUser.objects.get(id=instance.user_id)}, Ваш заказ оплачен"
+        send_mail(
+            "Привет",
+            f"Заказ {instance.id} оплачен.",
+            "dmitryposvyansky@yandex.ru",
+            [instance.user.email],
         )
+        """
+        TODO: почитать про SMTP и зарегистрировать приложение в гугл аккаунте
+        
+        """
 
 
 @receiver(post_save, sender=Product)
 def new_product_auto_tag(sender, instance, *args, **kwargs):
     tag = Tags.objects.get(name="Новинки")
     tag.product.add(instance)
+    tag.save()

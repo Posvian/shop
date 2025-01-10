@@ -28,6 +28,7 @@ class Product(TimestampMixin):
     rating = models.DecimalField(
         default=0, max_digits=3, decimal_places=2, verbose_name="Rating"
     )
+    weight = models.DecimalField(max_digits=5, decimal_places=3, default=1)
     sales_count = models.PositiveIntegerField(default=0)
     is_hidden = models.BooleanField(default=False)
 
