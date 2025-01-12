@@ -47,17 +47,18 @@ def delivery_method_price_validator(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=Order)
 def inform_order_user(sender, instance, created, *args, **kwargs):
-    if instance.is_paid:
-        send_mail(
-            "Привет",
-            f"Заказ {instance.id} оплачен.",
-            "dmitryposvyansky@yandex.ru",
-            [instance.user.email],
-        )
-        """
-        TODO: почитать про SMTP и зарегистрировать приложение в гугл аккаунте
-        
-        """
+    pass
+    # if instance.is_paid:
+    #     send_mail(
+    #         "Привет",
+    #         f"Заказ {instance.id} оплачен.",
+    #         "dmitryposvyansky@yandex.ru",
+    #         [instance.user.email],
+    #     )
+    #     """
+    #     TODO: почитать про SMTP и зарегистрировать приложение в гугл аккаунте
+    #
+    #     """
 
 
 @receiver(post_save, sender=Product)

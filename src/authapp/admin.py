@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 from mainapp.models.product import Product
 from mainapp.models.brand import Brand
 from mainapp.models.category import Category
@@ -10,6 +11,31 @@ from mainapp.models.product_in_order import ProductInOrder
 from mainapp.models.seller import Seller
 from mainapp.models.tag import Tags
 from authapp.models.custom_user import CustomUser
+
+
+class CountProductInOrderListFilter(admin.SimpleListFilter):
+    title = "Количество товаров"
+    parameter_name = "items"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("1", "1 товар"),
+            ("2_5", "2-5 товаров"),
+            ("6_", "6 и более товаров"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == "1":
+            return queryset.annotate(Count("items")).filter(items__count=1)
+
+        if self.value() == "2_5":
+            return queryset.annotate(Count("items")).filter(
+                items__count__gte=2, items__count__lte=5
+            )
+
+        if self.value() == "6_":
+            return queryset.annotate(Count("items")).filter(items__count__gt=5)
+        return queryset
 
 
 @admin.action(description="Mark selected orders as shipped")
@@ -87,7 +113,7 @@ class OrderAdmin(admin.ModelAdmin):
         "is_shipped",
         "is_delivered",
     ]
-    list_filter = ["is_paid", "is_shipped"]
+    list_filter = ["is_paid", "is_shipped", CountProductInOrderListFilter]
     inlines = [ProuctInOrderInline]
     actions = [make_shipped]
 
