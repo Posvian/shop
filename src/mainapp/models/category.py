@@ -1,5 +1,7 @@
 from django.db import models
+from .product import Product
 from django.core.validators import FileExtensionValidator
+from django.contrib import admin
 
 from base.models import TimestampMixin
 from base.services import validate_size_image
@@ -20,6 +22,10 @@ class Category(TimestampMixin):
 
     def __str__(self):
         return self.name
+
+    @admin.display(description="Number of products")
+    def number_of_products(self):
+        return Product.objects.filter(category_id=self.id).count()
 
     class Meta:
         db_table = "category"

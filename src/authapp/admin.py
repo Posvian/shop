@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, F
 from mainapp.models.product import Product
 from mainapp.models.brand import Brand
 from mainapp.models.category import Category
@@ -48,6 +48,15 @@ def delete_bad_feedbacks(modeladmin, request, queryset):
     queryset.filter(rating__lt=3).delete()
 
 
+@admin.action(description="Make 10 percent discount")
+def make_discount_product(modeladmin, request, queryset):
+    for obj in queryset:
+        price = obj.price
+        new_price = price - price / 100 * 10
+        obj.price = new_price
+        obj.save()
+
+
 class ProductInline(admin.StackedInline):
     model = Product
 
@@ -70,10 +79,11 @@ class ProuctInOrderInline(admin.StackedInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["name", "description", "stock_balance", "price"]
+    list_display = ["name", "description", "stock_balance", "price", "rating"]
     list_filter = ["category", "seller"]
     search_fields = ["name", "description"]
     inlines = [TagsInline, ProuctInOrderInline]
+    actions = [make_discount_product]
 
 
 @admin.register(Brand)
@@ -83,6 +93,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ["name", "number_of_products"]
     inlines = [ProductInline]
 
 
