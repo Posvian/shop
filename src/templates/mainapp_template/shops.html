@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Магазины</h1>
+    <div class="container">
+        {% for shop in shops %}
+        <div class="row">
+            <div class="col-sm">
+                {{ shop.name }}
+            </div>
+            <div class="col-sm">
+                {{ shop.country }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+{% endblock content %}

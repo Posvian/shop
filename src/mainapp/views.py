@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Product, Feedback
+from .models import Product, Feedback, Seller
 
 
 #
-def task_1(request):
+def products_view(request):
 
     products: Product = Product.objects.select_related(
         "category", "brand", "seller"
@@ -15,6 +15,17 @@ def task_1(request):
     }
     return render(
         request=request,
-        template_name="mainapp_template/task_1.html",
+        template_name="mainapp_template/products.html",
+        context=context,
+    )
+
+
+def shops_view(request):
+    shops: Seller = Seller.objects.all()
+    context = {"shops": shops}
+
+    return render(
+        request=request,
+        template_name="mainapp_template/shops.html",
         context=context,
     )

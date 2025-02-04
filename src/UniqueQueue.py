@@ -6,6 +6,7 @@ class UniqueQueue:
     FIFO = "FIFO"
     LIFO = "LIFO"
     STRATEGIES = [FIFO, LIFO]
+    PRIORITY = [1, 2, 3]
 
     def __init__(self, strategy=FIFO):
         if strategy not in self.STRATEGIES:
@@ -18,23 +19,35 @@ class UniqueQueue:
         product.sales_count = F("sales_count") + 1
         product.save()
 
-    def add_element(self, element: Product, *args: Product, priority=1):
-        if priority not in [1, 2, 3]:
+    def add_element(self, element: Product = None, priority=1):
+        if priority not in self.PRIORITY:
             raise ValueError
-        if element.stock_balance > 0:
-            try:
-                self.make_stock_balance_into_sales_count(element)
-                ProductQueue.objects.get(product_id=element.id)
-            except ProductQueue.DoesNotExist:
-                ProductQueue.objects.create(product=element, priority=priority)
-            else:
-                return "Продукт уже в очереди"
-        if args:
-            for arg in args:
-                if arg.stock_balance > 0:
-                    self.make_stock_balance_into_sales_count(arg)
-                    ProductQueue.objects.get_or_create(
-                        product=arg, priority=priority
+        if element:
+            if element.stock_balance > 0:
+                try:
+                    product = ProductQueue.objects.get(product_id=element.id)
+                except ProductQueue.DoesNotExist:
+                    self.make_stock_balance_into_sales_count(element)
+                    product = ProductQueue.objects.create(
+                        product=element, priority=priority
+                    )
+
+                return product
+
+    def bulk_add_elements(self):
+        pass
+
+    def add_elements(self, products: list[Product], priorities: list[dict]):
+        if products:
+            for product in products:
+                if product.stock_balance > 0:
+                    product_priority = 1
+                    for priority in priorities:
+                        if priority["id"] == product.id:
+                            product_priority = priority["priority"]
+                    self.make_stock_balance_into_sales_count(product)
+                    self.add_element(
+                        element=product, priority=product_priority
                     )
 
     def take_element(self):

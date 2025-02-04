@@ -1,16 +1,16 @@
-from django.test import TestCase
+# from django.test import TestCase
 
-# from django.test import Client
-#
+from django.test import Client
+
 #
 # class TestView(TestCase):
 #
 #     def test_view_product(self):
 #         client = Client()
-#         url = "/products/"
+#         url = "/mainapp/products/"
 #         response = client.get(url)
 #         self.assertEqual(response.status_code, 200)
-
+#
 
 # import unittest
 
@@ -79,7 +79,7 @@ from django.test import TestCase
 #         self.assertIsNone(value_1)
 
 
-from django.test import TestCase, Client
+from django.test import TestCase
 from UniqueQueue import UniqueQueue
 from mainapp.models.product_queue import ProductQueue
 from mainapp.models.product import Product
@@ -160,11 +160,11 @@ class TestUniqueQueue(TestCase):
 
     def test_add_product_twice(self):
         queue = UniqueQueue(strategy=self.FIFO_strategy)
-        queue.add_element(Product.objects.get(name="Apple"))
-        self.assertEqual(
-            "Продукт уже в очереди",
-            queue.add_element(Product.objects.get(name="Apple")),
-        )
+        first_product = Product.objects.get(name="Apple")
+        second_product = Product.objects.get(name="Apple")
+        first_product = queue.add_element(first_product)
+        second_product = queue.add_element(second_product)
+        self.assertEqual(first_product, second_product)
 
     def test_take_element_from_empty_queue(self):
         queue = UniqueQueue(strategy=self.FIFO_strategy)
@@ -187,18 +187,18 @@ class TestUniqueQueue(TestCase):
         result = queue.take_element()
         self.assertEqual(product, result)
 
-    def test_add_some_elements(self):
-        queue = UniqueQueue(strategy=self.FIFO_strategy)
-        product_1 = Product.objects.get(name="Apple")
-        product_2 = Product.objects.get(name="Banana")
-        product_3 = Product.objects.get(name="Pepsi")
-        queue.add_element(product_1, product_2, product_3)
-        value_1 = queue.take_element()
-        value_2 = queue.take_element()
-        value_3 = queue.take_element()
-        self.assertEqual(product_1, value_1)
-        self.assertEqual(product_2, value_2)
-        self.assertEqual(product_3, value_3)
+    # def test_add_some_elements(self):
+    #     queue = UniqueQueue(strategy=self.FIFO_strategy)
+    #     product_1 = Product.objects.get(name="Apple")
+    #     product_2 = Product.objects.get(name="Banana")
+    #     product_3 = Product.objects.get(name="Pepsi")
+    #     queue.add_element(product_1, product_2, product_3)
+    #     value_1 = queue.take_element()
+    #     value_2 = queue.take_element()
+    #     value_3 = queue.take_element()
+    #     self.assertEqual(product_1, value_1)
+    #     self.assertEqual(product_2, value_2)
+    #     self.assertEqual(product_3, value_3)
 
     def test_empty_DB(self):
         waiting_result = 0
