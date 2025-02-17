@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from src.mainapp.forms import SellerForm
+from django.views.generic import FormView, CreateView
+from src.mainapp.forms import SellerForm, FeedbackForm
 from .models import Product, Feedback, Seller
 
 
@@ -52,3 +53,9 @@ def add_seller_view(request):
         template_name="mainapp_template/seller_form.html",
         context=context,
     )
+
+
+class FeedbackView(CreateView):
+    template_name = "mainapp_template/feedback_form.html"
+    form_class = FeedbackForm
+    success_url = "/mainapp/products"

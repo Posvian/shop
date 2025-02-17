@@ -56,8 +56,8 @@ class TestFeedbackForm(TestCase):
         self.response = self.client.post(
             "/mainapp/feedback/",
             {
-                "user": user,
-                "product": product,
+                "user": user.id,
+                "product": product.id,
                 "feedback": feedback,
                 "rating": rating,
             },
