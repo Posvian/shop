@@ -6,9 +6,7 @@ from base.models import TimestampMixin
 
 class Product(TimestampMixin):
     name = models.CharField(max_length=30, verbose_name="Name")
-    description = models.TextField(
-        verbose_name="Description", blank=True, null=True
-    )
+    description = models.TextField(verbose_name="Description", blank=True, null=True)
     stock_balance = models.PositiveIntegerField(default=0)
     price = models.DecimalField(
         default=0, max_digits=10, decimal_places=2, verbose_name="Price"
@@ -30,6 +28,9 @@ class Product(TimestampMixin):
     )
     weight = models.DecimalField(max_digits=5, decimal_places=3, default=1)
     sales_count = models.PositiveIntegerField(default=0)
+    image = models.ImageField(
+        upload_to="products", verbose_name="Pictures", null=True, blank=True
+    )
     is_hidden = models.BooleanField(default=False)
 
     def __str__(self):

@@ -1,5 +1,8 @@
+from cProfile import label
+
 from django import forms
 from mainapp.models import Feedback
+from mainapp.models import Product
 
 
 class SellerForm(forms.Form):
@@ -18,3 +21,20 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
         fields = ["user", "product", "feedback", "rating"]
         widgets = {"feedback": forms.Textarea(attrs={"cols": 60, "rows": 10})}
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "description",
+            "stock_balance",
+            "price",
+            "category",
+            "brand",
+            "seller",
+            "weight",
+            "image",
+        ]
+        widgets = {"description": forms.Textarea(attrs={"cols": 60, "rows": 10})}
