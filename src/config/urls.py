@@ -26,6 +26,8 @@ from config import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("mainapp/", include("mainapp.urls")),
+    path("api-auth/", include("rest_framework.urls")),
+    path("api-shop/", include("shop_api.urls")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

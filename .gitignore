@@ -254,3 +254,4 @@ fabric.properties
 *.vsix
 
 .DS_Store
+.env.desktop

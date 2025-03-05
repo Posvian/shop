@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 
-load_dotenv()
+config_desktop = dotenv_values("../.env.desktop")
+config_docker = dotenv_values(".env")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = config_docker["SECRET_KEY"]
+SECRET_KEY = config_desktop["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,7 +53,17 @@ INSTALLED_APPS = [
     "mainapp.apps.MainappConfig",
     "base",
     "flower",
+    "rest_framework",
+    "shop_api",
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ]
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -86,15 +99,27 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": config_docker["DB_NAME"],
+#         "HOST": config_docker["DB_HOST"],
+#         "USER": config_docker["DB_USER"],
+#         "PASSWORD": config_docker["DB_PASS"],
+#         "PORT": config_docker["DB_PORT"],
+#         "TEST": {"NAME": config_docker["DB_TEST_NAME"]},
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME"),
-        "HOST": os.environ.get("DB_HOST"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASS"),
-        "PORT": os.environ.get("DB_PORT"),
-        "TEST": {"NAME": os.environ.get("DB_TEST_NAME")},
+        "NAME": config_desktop["DB_NAME"],
+        "HOST": config_desktop["DB_HOST"],
+        "USER": config_desktop["DB_USER"],
+        "PASSWORD": config_desktop["DB_PASS"],
+        "PORT": config_desktop["DB_PORT"],
+        "TEST": {"NAME": config_desktop["DB_TEST_NAME"]},
     }
 }
 
@@ -140,9 +165,10 @@ MEDIA_ROOT = "media_files"
 
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "default_redis"
-REDIS_HOST = "127.0.0.1"
-REDIS_PORT = "6379"
-CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+# REDIS_HOST = "127.0.0.1"
+# REDIS_PORT = "6379"
+# CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_BROKER_TRANSPORT__OPTIONS = {"visibility_timeout": 3600}
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -162,7 +188,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"
 EMAIL_PORT = 465
 EMAIL_HOST_USER = "dmitryposvyansky@yandex.ru"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST_PASSWORD = config_docker["EMAIL_HOST_PASSWORD"]
+EMAIL_HOST_PASSWORD = config_desktop["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_SSL = True
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

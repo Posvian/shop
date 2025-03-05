@@ -1,0 +1,77 @@
+version: "3"
+services:
+  app:
+    env_file:
+      - .env
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./src:/src
+#    environment:
+#      DB_USER: postgres
+#      DB_PASS: postgres
+#      DB_NAME: postgres
+#      DB_HOST: db
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5434:5434"
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_DB: postgres
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "6379:6379"
+
+  celery:
+    restart: always
+    env_file:
+      - .env
+    build:
+      context: .
+    environment:
+      BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    command: celery -A config worker -l info -E
+    volumes:
+      - ./src:/src
+    depends_on:
+      - redis
+
+  flower:
+    restart: always
+    build:
+      context: .
+    environment:
+      BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    command: celery -A config flower
+    volumes:
+      - ./src:/src
+    ports:
+      - "5566:5555"
+    depends_on:
+      - celery
+      - redis
+
+volumes:
+  pgdata:

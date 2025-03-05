@@ -3,7 +3,7 @@ from lib2to3.fixes.fix_input import context
 from django.shortcuts import render, redirect
 from django.views.generic import FormView, CreateView
 from mainapp.forms import SellerForm, FeedbackForm, ProductForm
-from .models import Product, Feedback, Seller
+from .models import Product, Feedback, Seller, Category, Brand
 from .tasks import make_image
 
 
@@ -81,9 +81,9 @@ def add_product_view(request):
                     description=description,
                     stock_balance=stock_balance,
                     price=price,
-                    category_id=category,
-                    brand_id=brand,
-                    seller_id=seller,
+                    category=Category.objects.get(id=int(category)),
+                    brand=Brand.objects.get(id=int(brand)),
+                    seller=Seller.objects.get(id=int(seller)),
                     weight=weight,
                     image=image,
                 )
