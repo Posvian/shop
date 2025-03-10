@@ -3,6 +3,7 @@ from django.core.validators import ValidationError
 from django.core.mail import send_mail
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models import ObjectDoesNotExist
 from authapp.models import CustomUser
 from .models import Product, Feedback, Order, DeliveryMethod, Tags
 
@@ -63,6 +64,9 @@ def inform_order_user(sender, instance, created, *args, **kwargs):
 
 @receiver(post_save, sender=Product)
 def new_product_auto_tag(sender, instance, *args, **kwargs):
-    tag = Tags.objects.get(name="Новинки")
-    tag.product.add(instance)
-    tag.save()
+    try:
+        tag = Tags.objects.get(name="Новинки")
+        tag.product.add(instance)
+        tag.save()
+    except ObjectDoesNotExist:
+        pass
