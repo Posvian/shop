@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
@@ -7,6 +8,7 @@ from authapp.models import CustomUser
 from mainapp.models import Product, Feedback
 from shop_api.filters import ProductFilter
 from shop_api.pagination import FiveResultsSetPagination
+from shop_api.permissions import IsOwnerOrReadOnly
 from shop_api.serializers import (
     CustomUserSerializer,
     ProductSerializer,
@@ -27,6 +29,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
     ]
     filterset_class = ProductFilter
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly]
 
     @action(methods=["get", "post"], detail=True)
     def review(self, request, pk=None):

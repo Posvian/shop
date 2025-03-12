@@ -1,6 +1,8 @@
 from django.dispatch import receiver
 from django.db import models
 from django.db.models.signals import post_delete
+
+from authapp.models import CustomUser
 from base.models import TimestampMixin
 
 
@@ -32,6 +34,9 @@ class Product(TimestampMixin):
         upload_to="products", verbose_name="Pictures", null=True, blank=True
     )
     is_hidden = models.BooleanField(default=False)
+    user = models.ForeignKey(
+        to=CustomUser, on_delete=models.CASCADE, verbose_name="owner"
+    )
 
     def __str__(self):
         return self.name

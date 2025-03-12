@@ -11,6 +11,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Product
         fields = (
@@ -25,6 +27,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "weight",
             "sales_count",
             "is_hidden",
+            "user",
         )
 
 
