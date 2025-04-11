@@ -13,7 +13,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 
 from authapp.models import CustomUser
-from mainapp.models import Product, Feedback, Cart, CartItem
+from mainapp.models import Product, Feedback, Cart, CartItem, Order, ProductInOrder
 from shop_api.filters import ProductFilter
 from shop_api.pagination import FiveResultsSetPagination
 from shop_api.permissions import IsOwnerOrReadOnly
@@ -22,6 +22,7 @@ from shop_api.serializers import (
     AddProductSerializer,
     FeedbackSerializer,
     CartSerializer,
+    OrderSerializer,
 )
 from shop_api.services import delete_cache
 from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
@@ -199,3 +200,57 @@ class ClearCartView(APIView):
         return Response(
             {"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND
         )
+
+
+class CreateOrderView(APIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def post(self, request):
+        cart: Cart = Cart.objects.filter(user=request.user).first()
+        if not cart or cart.items.count() == 0:
+            return Response(
+                {"error": "Корзина пуста или не существует"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        product_out_of_stock = []
+        for item in cart.items.all():
+            if item.product.stock_balance < item.quantity:
+                product_out_of_stock.append(
+                    {
+                        "product_id": item.product.id,
+                        "product_name": item.product.name,
+                        "доступно": item.product.stock_balance,
+                    }
+                )
+
+        if product_out_of_stock:
+            return Response(
+                {
+                    "error": "В корзине есть недоступные товары",
+                    "Недоступные товары": product_out_of_stock,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order = Order.objects.create(
+            user=request.user,
+            final_price=sum(
+                item.product.price * item.quantity for item in cart.items.all()
+            ),
+        )
+
+        for item in cart.items.all():
+            ProductInOrder.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.price,
+            )
+            item.product.stock_balance -= item.quantity
+            item.product.save()
+
+        cart.items.all().delete()
+
+        serializer = OrderSerializer(order)
+
+        return Response(serializer.data)

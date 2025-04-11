@@ -15,6 +15,7 @@ from shop_api.views import (
     UpdateCartItemView,
     RemoveFromCartView,
     ClearCartView,
+    CreateOrderView,
 )
 
 # from shop_api.views import UserAPIView
@@ -49,4 +50,5 @@ urlpatterns = [
         name="remove-from-cart",
     ),
     path("v1/cart/clear/", ClearCartView.as_view(), name="clear-cart"),
+    path("v1/order/create/", CreateOrderView.as_view(), name="create-order"),
 ]

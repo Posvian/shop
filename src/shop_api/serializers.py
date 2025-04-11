@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from authapp.models import CustomUser
-from mainapp.models import Product, Feedback, CartItem, Cart, ProductInOrder
+from mainapp.models import Product, Feedback, CartItem, Cart, ProductInOrder, Order
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -76,4 +76,5 @@ class OrderSerializer(serializers.ModelSerializer):
     items = ProductInOrderSerializer(many=True)
 
     class Meta:
-        model = 
+        model = Order
+        fields = ("items", "final_price")
