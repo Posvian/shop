@@ -9,3 +9,5 @@ from .seller import Seller
 from .delivery_method import DeliveryMethod
 from .tag import Tags
 from .product_queue import ProductQueue
+from .cart import Cart
+from .cart_item import CartItem

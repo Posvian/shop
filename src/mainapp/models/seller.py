@@ -4,14 +4,14 @@ from .product import Product
 
 
 class Seller(TimestampMixin):
-    name = models.CharField(max_length=40, verbose_name="seller")
+    name = models.CharField(max_length=110, verbose_name="seller")
     iin = models.CharField(
-        max_length=12,
+        max_length=13,
         blank=True,
         null=True,
         verbose_name="individual identification number",
     )
-    country = models.CharField(max_length=40, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
     rating = models.DecimalField(
         default=0, max_digits=3, decimal_places=2, verbose_name="Rating"
     )
