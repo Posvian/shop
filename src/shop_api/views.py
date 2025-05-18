@@ -2,6 +2,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.db import transaction
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
     IsAuthenticated,
@@ -203,7 +204,7 @@ class ClearCartView(APIView):
 
 
 class CreateOrderView(APIView):
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]  # [IsAuthenticated, IsOwnerOrReadOnly]
 
     def post(self, request):
         cart: Cart = Cart.objects.filter(user=request.user).first()
@@ -231,25 +232,25 @@ class CreateOrderView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        order = Order.objects.create(
-            user=request.user,
-            final_price=sum(
-                item.product.price * item.quantity for item in cart.items.all()
-            ),
-        )
-
-        for item in cart.items.all():
-            ProductInOrder.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price=item.product.price,
+        with transaction.atomic():
+            order = Order.objects.create(
+                user=request.user,
+                final_price=sum(
+                    item.product.price * item.quantity for item in cart.items.all()
+                ),
             )
-            item.product.stock_balance -= item.quantity
-            item.product.save()
 
-        cart.items.all().delete()
+            for item in cart.items.all():
+                ProductInOrder.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    price=item.product.price,
+                )
+                item.product.stock_balance -= item.quantity
+                item.product.save()
+
+            cart.items.all().delete()
 
         serializer = OrderSerializer(order)
 

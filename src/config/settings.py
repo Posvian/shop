@@ -16,7 +16,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv, dotenv_values
 
-config_desktop = dotenv_values("../.env.desktop")
+config_desktop = dotenv_values(".env.desktop")
 config_docker = dotenv_values(".env")
 
 
