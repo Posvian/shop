@@ -26,7 +26,12 @@ from shop_api.serializers import (
     OrderSerializer,
 )
 from shop_api.services import delete_cache
-from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
+from shop_api.db_queries.selectors import (
+    get_cart_instance,
+    check_cart_products_out_of_stock,
+    inform_user_that_products_out_of_stock,
+    create_order,
+)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -207,48 +212,15 @@ class CreateOrderView(APIView):
     permission_classes = [IsOwnerOrReadOnly]  # [IsAuthenticated, IsOwnerOrReadOnly]
 
     def post(self, request):
-        cart: Cart = Cart.objects.filter(user=request.user).first()
-        if not cart or cart.items.count() == 0:
-            return Response(
-                {"error": "Корзина пуста или не существует"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        product_out_of_stock = []
-        for item in cart.items.all():
-            if item.product.stock_balance < item.quantity:
-                product_out_of_stock.append(
-                    {
-                        "product_id": item.product.id,
-                        "product_name": item.product.name,
-                        "доступно": item.product.stock_balance,
-                    }
-                )
 
+        cart = get_cart_instance(request)
+
+        product_out_of_stock = check_cart_products_out_of_stock(cart)
         if product_out_of_stock:
-            return Response(
-                {
-                    "error": "В корзине есть недоступные товары",
-                    "Недоступные товары": product_out_of_stock,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        with transaction.atomic():
-            order = Order.objects.create(
-                user=request.user,
-                final_price=sum(
-                    item.product.price * item.quantity for item in cart.items.all()
-                ),
-            )
+            return inform_user_that_products_out_of_stock(product_out_of_stock)
 
-            for item in cart.items.all():
-                ProductInOrder.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity,
-                    price=item.product.price,
-                )
-                item.product.stock_balance -= item.quantity
-                item.product.save()
+        with transaction.atomic():
+            order = create_order(request, cart)
 
             cart.items.all().delete()
 
