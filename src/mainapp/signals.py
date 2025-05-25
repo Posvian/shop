@@ -1,3 +1,5 @@
+from itertools import product
+
 from django.core.signals import request_finished
 from django.core.validators import ValidationError
 from django.core.mail import send_mail
@@ -5,7 +7,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.models import ObjectDoesNotExist
 from authapp.models import CustomUser
-from .models import Product, Feedback, Order, DeliveryMethod, Tags
+from .models import Product, Feedback, Order, DeliveryMethod, Tags, ProductInOrder
 
 
 @receiver(request_finished)
@@ -70,3 +72,7 @@ def new_product_auto_tag(sender, instance, *args, **kwargs):
         tag.save()
     except ObjectDoesNotExist:
         pass
+
+
+# @receiver(pre_save, sender=ProductInOrder)
+# def

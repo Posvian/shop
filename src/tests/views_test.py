@@ -1,7 +1,9 @@
 from itertools import product
+from sqlite3 import IntegrityError
 from threading import Event, Thread
 from time import sleep
 from unittest.mock import patch
+from wsgiref.validate import assert_
 
 from django.test import TestCase
 from django.test import Client
@@ -208,13 +210,14 @@ class TestBuyProduct(TransactionTestCase):
                 target=self.make_request,
                 args=("user_2", "234"),
             )
-            thread_client_1.start()
-            thread_client_2.start()
+            with self.assertRaises(IntegrityError):
+                thread_client_1.start()
+                thread_client_2.start()
 
-            sleep(1)
-            event.set()
+                sleep(1)
+                event.set()
 
-            thread_client_1.join(timeout=5)
-            thread_client_2.join(timeout=5)
+                thread_client_1.join(timeout=5)
+                thread_client_2.join(timeout=5)
 
         self.assertEqual(Order.objects.count(), 1)

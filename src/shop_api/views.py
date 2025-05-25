@@ -26,7 +26,7 @@ from shop_api.serializers import (
     OrderSerializer,
 )
 from shop_api.services import delete_cache
-from shop_api.db_queries.selectors import (
+from shop_api.services import (
     get_cart_instance,
     check_cart_products_out_of_stock,
     inform_user_that_products_out_of_stock,
