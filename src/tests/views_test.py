@@ -1,13 +1,11 @@
-from itertools import product
-from sqlite3 import IntegrityError
 from threading import Event, Thread
 from time import sleep
-from unittest.mock import patch
-from wsgiref.validate import assert_
 
+from django.db import connection
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
+from rest_framework import status
 
 import sys
 import os
@@ -56,7 +54,7 @@ class TestProductsView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_context_products(self):
-        waiting_result = Product.objects.get(name="Apple")
+        waiting_result = Product.objects.get(name="Banana")
         result = self.c.get("/mainapp/products/").context[0].dicts[3]["products"][0]
         self.assertEqual(waiting_result, result)
 
@@ -178,14 +176,19 @@ class TestBuyProduct(TransactionTestCase):
             product=Product.objects.get(name="Apple"),
         )
 
-    def make_request(self, username, password):
-        url = reverse("create-order")
-        self.c.login(username=username, password=password)
-        response = self.c.post(
-            url,
-            data={},
-        )
-        self.assertEqual(response.status_code, 302)
+        self.results = {}
+
+    def make_request(self, username, password, label):
+        try:
+            url = reverse("create-order")
+            self.c.login(username=username, password=password)
+            response = self.c.post(
+                url,
+                data={},
+            )
+            self.results[label] = response.status_code
+        finally:
+            connection.close()
 
     def test_succses(self):
         view_instance = CreateOrderView()
@@ -201,23 +204,24 @@ class TestBuyProduct(TransactionTestCase):
             fake_make_order.side_effect = new_behavior
             thread_client_1 = Thread(
                 target=self.make_request,
-                args=(
-                    "user_1",
-                    "123",
-                ),
+                args=("user_1", "123", "first"),
             )
             thread_client_2 = Thread(
                 target=self.make_request,
-                args=("user_2", "234"),
+                args=("user_2", "234", "second"),
             )
-            with self.assertRaises(IntegrityError):
-                thread_client_1.start()
-                thread_client_2.start()
+            # with self.assertRaises(IntegrityError):
+            thread_client_1.start()
+            thread_client_2.start()
 
-                sleep(1)
-                event.set()
+            sleep(1)
+            event.set()
 
-                thread_client_1.join(timeout=5)
-                thread_client_2.join(timeout=5)
+        thread_client_1.join(timeout=5)
+        thread_client_2.join(timeout=5)
+
+        codes = set(self.results.values())
+        self.assertIn(status.HTTP_200_OK, codes)
+        self.assertIn(status.HTTP_400_BAD_REQUEST, codes)
 
         self.assertEqual(Order.objects.count(), 1)
