@@ -38,7 +38,7 @@ humanize==4.12.1
 idna==3.10
 ipython==8.30.0
 jedi==0.19.2
-kombu==5.2.2
+kombu==5.3.4
 Markdown==3.7
 matplotlib-inline==0.1.7
 multidict==6.1.0
