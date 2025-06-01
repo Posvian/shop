@@ -46,6 +46,7 @@ class TestFeedbackForm(TestCase):
             category=Category.objects.get(name="Fruits"),
             brand=Brand.objects.get(name="Russia Fruits"),
             seller=Seller.objects.get(name="Lenta"),
+            user=CustomUser.objects.get(username="Posvian"),
         )
 
     def test_add_feedback(self):

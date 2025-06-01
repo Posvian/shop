@@ -28,9 +28,6 @@ def products_view(request):
 def shops_view(request):
     shops: Seller = Seller.objects.all()
     context = {"shops": shops}
-    from .tasks import add
-
-    a = add.delay(5, 5)
 
     return render(
         request=request,

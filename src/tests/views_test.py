@@ -1,8 +1,10 @@
 from threading import Event, Thread
 from time import sleep
+from unittest.mock import patch
 
 from django.db import connection
 from django.test import TestCase
+from django.test import TransactionTestCase, RequestFactory
 from django.test import Client
 from django.urls import reverse
 from rest_framework import status
@@ -12,6 +14,7 @@ import os
 
 from authapp.models import CustomUser
 from mainapp.models import Tags, Category, Brand, Seller, Product, Cart, CartItem, Order
+from shop_api.views import AddToCartView, CreateOrderView
 
 sys.path.insert(0, os.path.join(__file__, "../.."))
 
@@ -74,71 +77,6 @@ class TestShopsView(TestCase):
         waiting_result = Seller.objects.get(name="Lenta")
         result = self.c.get(url).context[0].dicts[3]["shops"][0]
         self.assertEqual(result, waiting_result)
-
-
-# class TestFindHost(TransactionTestCase):
-#     max_bill = 200
-#
-#     def setUp(self):
-#         self.client = Client()
-#         self.hobby = models.Hobby.objects.create(name="bookscrapping")
-#         self.host = models.Host.objects.create(
-#             name="Oleg", age=23, max_guest_bill=self.max_bill
-#         )
-#         self.host.hobbies.add(self.hobby)
-#         self.pub = models.Pub.objects.create(
-#             name="pub", lat=12, long=32, max_visitors=100, visitor_count=0
-#         )
-#         # self.first_guest = models.Guest.objects.create(
-#         #     name='Hanna', age=25, desired_order_value=self.max_bill - 10
-#         # )
-#         # self.first_guest.hobbies.add(self.hobby)
-#
-#     def tearDown(self):
-#         self.hobby.delete()
-#         self.host.delete()
-#         self.pub.delete()
-#         # self.first_guest.delete()
-#
-#     def make_request(self, name):
-#         url = reverse("friends:find_friend")
-#         response = self.client.post(
-#             url,
-#             data={
-#                 "name": name,
-#                 "desired_order_value": self.max_bill - 10,
-#                 "hobbies": [self.hobby.id],
-#             },
-#         )
-#         self.assertEqual(response.status_code, 302)
-#
-#     def test_success(self):
-#         original_make_arrangement = views.make_arrangement
-#         event = threading.Event()
-#
-#         def new_behavior(*args, **kw):
-#             event.wait(timeout=5)
-#             return original_make_arrangement(*args, **kw)
-#
-#         with patch("friends.views.make_arrangement") as fake_make_arrangement:
-#             fake_make_arrangement.side_effect = new_behavior
-#             thread_hanna = threading.Thread(target=self.make_request, args=("Hanna",))
-#             thread_irina = threading.Thread(target=self.make_request, args=("Irina",))
-#             thread_hanna.start()
-#             thread_irina.start()
-#
-#             sleep(1)
-#             event.set()
-#
-#             thread_hanna.join(timeout=5)
-#             thread_irina.join(timeout=5)
-#
-#         self.assertEqual(models.Arrangement.objects.count(), 1)
-
-
-from django.test import TransactionTestCase, RequestFactory
-from unittest.mock import patch
-from shop_api.views import AddToCartView, CreateOrderView
 
 
 class TestBuyProduct(TransactionTestCase):
