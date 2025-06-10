@@ -26,8 +26,6 @@ jobs:
     - name: Run Tests
       run: |
         cd ./src
-        echo "SECRET_KEY = 'django-insure-14124325'" > .env.desktop
-        echo "DB_TEST_NAME='TEST_DB'" > .env.desktop
         python manage.py test
         python manage.py test tests.views_test
         python manage.py test tests.form_test

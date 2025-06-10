@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = config_docker["SECRET_KEY"]
-SECRET_KEY = config_desktop["SECRET_KEY"]
+SECRET_KEY = config_desktop.get("SECRET_KEY", "123124213")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -132,7 +132,7 @@ DATABASES = {
         "USER": config_desktop["DB_USER"],
         "PASSWORD": config_desktop["DB_PASS"],
         "PORT": config_desktop["DB_PORT"],
-        "TEST": {"NAME": config_desktop["DB_TEST_NAME"]},
+        "TEST": {"NAME": "TEST_DB"},
     }
 }
 
