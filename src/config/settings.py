@@ -127,11 +127,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config_desktop.get("DB_NAME", "ci_DB"),
-        "HOST": config_desktop.get("DB_HOST", "ci_host"),
-        "USER": config_desktop.get("DB_USER", "ci_user"),
-        "PASSWORD": config_desktop.get("DB_PASS", "ci_pass"),
-        "PORT": config_desktop.get("DB_PORT", "12421"),
+        "NAME": config_desktop.get("DB_NAME", "postgres"),
+        "HOST": config_desktop.get("DB_HOST", "localhost"),
+        "USER": config_desktop.get("DB_USER", "postgres"),
+        "PASSWORD": config_desktop.get("DB_PASS", "postgres"),
+        "PORT": config_desktop.get("DB_PORT", "5432"),
         "TEST": {"NAME": "TEST_DB"},
     }
 }
