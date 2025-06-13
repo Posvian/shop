@@ -57,7 +57,7 @@ class TestProductsView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_context_products(self):
-        waiting_result = Product.objects.get(name="Banana")
+        waiting_result = Product.objects.get(name="Apple")
         result = self.c.get("/mainapp/products/").context[0].dicts[3]["products"][0]
         self.assertEqual(waiting_result, result)
 

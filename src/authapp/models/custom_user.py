@@ -13,19 +13,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
         help_text="Допустимо использовать только латинские буквы. Длина не может превышать 150 символов",
         validators=[username_validator],
-        error_messages={
-            "unique": "Пользователь с таким логином уже существует."
-        },
+        error_messages={"unique": "Пользователь с таким логином уже существует."},
     )
-    first_name = models.CharField(
-        verbose_name="first_name", max_length=50, blank=True
-    )
-    last_name = models.CharField(
-        verbose_name="last_name", max_length=50, blank=True
-    )
-    age = models.PositiveIntegerField(
-        verbose_name="age", blank=True, null=True
-    )
+    first_name = models.CharField(verbose_name="first_name", max_length=50, blank=True)
+    last_name = models.CharField(verbose_name="last_name", max_length=50, blank=True)
+    age = models.PositiveIntegerField(verbose_name="age", blank=True, null=True)
     email = models.EmailField(
         verbose_name="email address",
         max_length=256,

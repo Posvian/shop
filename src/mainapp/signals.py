@@ -64,14 +64,14 @@ def inform_order_user(sender, instance, created, *args, **kwargs):
     #     """
 
 
-@receiver(post_save, sender=Product)
-def new_product_auto_tag(sender, instance, *args, **kwargs):
-    try:
-        tag = Tags.objects.get(name="Новинки")
-        tag.product.add(instance)
-        tag.save()
-    except ObjectDoesNotExist:
-        pass
+# @receiver(post_save, sender=Product)
+# def new_product_auto_tag(sender, instance, *args, **kwargs):
+#     try:
+#         tag = Tags.objects.get(name="Новинки")
+#         tag.product.add(instance)
+#         tag.save()
+#     except ObjectDoesNotExist:
+#         pass
 
 
 # @receiver(pre_save, sender=ProductInOrder)
