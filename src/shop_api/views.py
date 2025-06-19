@@ -1,3 +1,4 @@
+import logging
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, status
@@ -33,8 +34,11 @@ from shop_api.services import (
     create_order,
 )
 
+logger = logging.getLogger("main")
+
 
 class CustomUserViewSet(viewsets.ModelViewSet):
+    logger.info("Open users list")
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 

@@ -1,10 +1,11 @@
-from lib2to3.fixes.fix_input import context
-
+import logging
 from django.shortcuts import render, redirect
 from django.views.generic import FormView, CreateView
 from mainapp.forms import SellerForm, FeedbackForm, ProductForm
 from .models import Product, Feedback, Seller, Category, Brand
 from .tasks import make_image
+
+logger = logging.getLogger("main")
 
 
 #
@@ -37,6 +38,7 @@ def shops_view(request):
 
 
 def add_seller_view(request):
+    logger.info("Open add_seller_view")
     context = {}
     if request.method == "POST":
         form = SellerForm(request.POST)
