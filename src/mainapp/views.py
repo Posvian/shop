@@ -11,9 +11,11 @@ logger = logging.getLogger("main")
 #
 def products_view(request):
 
-    products: Product = Product.objects.select_related(
-        "category", "brand", "seller"
-    ).all()
+    products: Product = (
+        Product.objects.select_related("category", "brand", "seller")
+        .all()
+        .order_by("-id")
+    )
     feedback = Feedback.objects.select_related("user", "product").all()
     context = {
         "products": products,
